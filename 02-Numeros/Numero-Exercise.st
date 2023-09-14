@@ -449,15 +449,11 @@ addToEntero: anEntero1stAdder
 	
 ! !
 
-!Entero methodsFor: 'arithmetic operations' stamp: 'ma 9/13/2023 12:16:34'!
+!Entero methodsFor: 'arithmetic operations' stamp: 'tp 9/14/2023 13:37:00'!
 addToFraccion: aFraccion1stAdder
 	
-	|newNumerator newDenominator | 
-	
-	newNumerator := aFraccion1stAdder numerator + (self value  * aFraccion1stAdder denominator) .
-	newDenominator := aFraccion1stAdder denominator.
-		
-	^newNumerator / newDenominator 
+	^self numerator: [aFraccion1stAdder numerator + (self value  * aFraccion1stAdder denominator)]
+		 overCommonDenominatorWith: 	aFraccion1stAdder 
 	
 	
 ! !
@@ -506,20 +502,29 @@ multiplyToEntero: anEntero1stMultiplier
 	
 	! !
 
-!Entero methodsFor: 'arithmetic operations' stamp: 'ma 9/13/2023 12:17:49'!
+!Entero methodsFor: 'arithmetic operations' stamp: 'tp 9/14/2023 13:36:49'!
 multiplyToFraccion: aFraccion1stMultiplier 
 	
-	| newNumerator newDenominator |
-
-	newNumerator := aFraccion1stMultiplier numerator * self .
-	newDenominator := aFraccion1stMultiplier denominator.
-		
-	^newNumerator / newDenominator 
+	^self numerator: 	[aFraccion1stMultiplier numerator * self]
+		 overCommonDenominatorWith: aFraccion1stMultiplier 
 	
 	
 
 	
 	! !
+
+!Entero methodsFor: 'arithmetic operations' stamp: 'tp 9/14/2023 13:36:24'!
+numerator: anOperationForTheNewNumerator overCommonDenominatorWith: aFraccionOperand
+	
+	|newNumerator newDenominator | 
+	
+	newNumerator := anOperationForTheNewNumerator value.
+	newDenominator := aFraccionOperand denominator.
+		
+	^newNumerator / newDenominator 
+	
+	
+! !
 
 !Entero methodsFor: 'arithmetic operations' stamp: 'ma 9/13/2023 12:18:18'!
 substractToEntero: anEnteroMinuend  
@@ -529,16 +534,11 @@ substractToEntero: anEnteroMinuend
 	
 ! !
 
-!Entero methodsFor: 'arithmetic operations' stamp: 'ma 9/13/2023 12:18:30'!
+!Entero methodsFor: 'arithmetic operations' stamp: 'tp 9/14/2023 13:36:38'!
 substractToFraccion: aFraccionMinuend
 	
-	| newNumerator newDenominator |
-
-	newNumerator := aFraccionMinuend numerator - (self value * aFraccionMinuend denominator) .
-	newDenominator := aFraccionMinuend denominator.
-		
-	^newNumerator / newDenominator 
-	
+	^self numerator: [aFraccionMinuend numerator - (self value * aFraccionMinuend denominator) ]
+		 overCommonDenominatorWith: 	aFraccionMinuend 
 	
 ! !
 
@@ -599,7 +599,7 @@ Entero class
 negativeFibonacciErrorDescription
 	^ ' Fibonacci no está definido aquí para Enteros Negativos!!!!!!'! !
 
-!Entero class methodsFor: 'instance creation' stamp: 'Mauro 9/11/2023 21:49:57'!
+!Entero class methodsFor: 'instance creation' stamp: 'tp 9/14/2023 13:37:28'!
 with: aValue 
 	
 	"Esta verificacion esta puesta por si se equivocan y quieren crear un Entero pasando otra cosa que un Integer - Hernan"
@@ -608,17 +608,17 @@ with: aValue
 	(aValue between: 0 and: 1) ifTrue: [^ZeroOrOne new initalizeWith: aValue].
 	(aValue < 0) ifTrue: [^NegativeEntero new initalizeWith: aValue].
 
-	^GreaterThan1 new initalizeWith: aValue! !
+	^GreaterThan1Entero new initalizeWith: aValue! !
 
 
-!classDefinition: #GreaterThan1 category: 'Numero-Exercise'!
-Entero subclass: #GreaterThan1
+!classDefinition: #GreaterThan1Entero category: 'Numero-Exercise'!
+Entero subclass: #GreaterThan1Entero
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Numero-Exercise'!
 
-!GreaterThan1 methodsFor: 'as yet unclassified' stamp: 'Mauro 9/11/2023 21:53:15'!
+!GreaterThan1Entero methodsFor: 'as yet unclassified' stamp: 'Mauro 9/11/2023 21:53:15'!
 fibonacci
 	| one two |
 	
@@ -708,15 +708,11 @@ addToEntero: anEntero1stAdder
 	
 	! !
 
-!Fraccion methodsFor: 'arithmetic operations' stamp: 'ma 9/13/2023 12:19:24'!
+!Fraccion methodsFor: 'arithmetic operations' stamp: 'tp 9/14/2023 13:34:44'!
 addToFraccion: aFraccion1stAdder
-	
-	| newNumerator newDenominator |
-	
-	newNumerator := (aFraccion1stAdder numerator * self denominator) + (aFraccion1stAdder denominator * self numerator).
-	newDenominator := aFraccion1stAdder denominator * self denominator.
-		
-	^newNumerator / newDenominator 
+
+	^ self numerator: [(aFraccion1stAdder numerator * self denominator) + (aFraccion1stAdder denominator * self numerator)]
+		 overCommonDenominatorWith: aFraccion1stAdder 
 		
 	
 	
@@ -774,16 +770,34 @@ multiplyToEntero: anEntero1stMultiplier
 	
 	! !
 
-!Fraccion methodsFor: 'arithmetic operations' stamp: 'ma 9/13/2023 13:13:08'!
+!Fraccion methodsFor: 'arithmetic operations' stamp: 'tp 9/14/2023 13:34:31'!
 multiplyToFraccion: aFraccion1stMultiplier 
 	
-	^(aFraccion1stMultiplier numerator * self numerator) / 
-	   (aFraccion1stMultiplier commonDenominatorWith: self)
+	^ self numerator: [aFraccion1stMultiplier numerator * self numerator]
+		  overCommonDenominatorWith: aFraccion1stMultiplier 
 	
 
 	
 	
 
+	
+	! !
+
+!Fraccion methodsFor: 'arithmetic operations' stamp: 'tp 9/14/2023 13:35:19'!
+numerator: anOperationForTheNewNumerator overCommonDenominatorWith: aFraccionOperand
+	
+	| newNumerator newDenominator |
+	
+	newNumerator := anOperationForTheNewNumerator value.
+	newDenominator := aFraccionOperand commonDenominatorWith: self.
+		
+	^newNumerator / newDenominator 
+		
+	
+	
+	
+	
+	
 	
 	! !
 
@@ -798,30 +812,11 @@ substractToEntero: anEnteroMinuend
 	
 	! !
 
-!Fraccion methodsFor: 'arithmetic operations' stamp: 'ma 9/13/2023 13:01:00'!
-substractToFraccion2: aFraccionMinuend 
-
-	| newDenominator equivalentMinuendInCommonBase equivalentSubstraendInBase |
-	newDenominator := aFraccionMinuend commonDenominatorWith: self.
-	equivalentMinuendInCommonBase:= aFraccionMinuend convertToEquivalentInBase: newDenominator.
-	equivalentSubstraendInBase:= self convertToEquivalentInBase: newDenominator.
-
-	^equivalentMinuendInCommonBase numerator - equivalentSubstraendInBase numerator / newDenominator 
-		
-	
-	
-	
-! !
-
-!Fraccion methodsFor: 'arithmetic operations' stamp: 'ma 9/13/2023 13:02:46'!
+!Fraccion methodsFor: 'arithmetic operations' stamp: 'tp 9/14/2023 13:34:17'!
 substractToFraccion: aFraccionMinuend 
-
-	| newNumerator newDenominator |
-
-	newNumerator := (aFraccionMinuend numerator * self denominator) - (aFraccionMinuend denominator * self numerator).
-	newDenominator := aFraccionMinuend commonDenominatorWith: self .
 	
-	^newNumerator / newDenominator 
+	^ self numerator: [(aFraccionMinuend numerator * self denominator) - (aFraccionMinuend denominator * self numerator)] 
+		  overCommonDenominatorWith: aFraccionMinuend
 		
 	
 	
