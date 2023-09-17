@@ -145,51 +145,77 @@ TestCase subclass: #SentenceFinderByPrefixTest
 	category: 'Stack-Exercise'!
 
 
-!classDefinition: #OOStack category: 'Stack-Exercise'!
-Object subclass: #OOStack
-	instanceVariableNames: 'items'
+!classDefinition: #StackElementTest category: 'Stack-Exercise'!
+TestCase subclass: #StackElementTest
+	instanceVariableNames: 'value'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Stack-Exercise'!
 
-!OOStack methodsFor: 'initialization' stamp: 'tp 9/15/2023 13:11:05'!
-initialize
-	items := OrderedCollection new! !
+!StackElementTest methodsFor: 'test' stamp: 'ma 9/17/2023 12:49:20'!
+test01InitializeWithValue
 
-
-!OOStack methodsFor: 'testing' stamp: 'tp 9/15/2023 13:12:13'!
-isEmpty
+	| stackElement |
 	
-	^ items isEmpty! !
+	stackElement := StackElement initializeWith: 'test'.
+	
+	self assert: stackElement value = 'test'! !
 
-!OOStack methodsFor: 'testing' stamp: 'tp 9/15/2023 13:14:45'!
-size
+
+!classDefinition: #OOStack category: 'Stack-Exercise'!
+Object subclass: #OOStack
+	instanceVariableNames: 'elements'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Stack-Exercise'!
 
-	^items size! !
+!OOStack methodsFor: 'operations' stamp: 'ma 9/17/2023 13:41:38'!
+isEmpty
+	^elements size = 1! !
 
-
-!OOStack methodsFor: 'operations' stamp: 'tp 9/15/2023 13:16:29'!
+!OOStack methodsFor: 'operations' stamp: 'tp 9/17/2023 14:37:02'!
 pop
 	
-	self onEmptyStackRaiseError.
-	^ items removeLast! !
+	^(elements last) pop: self! !
 
-!OOStack methodsFor: 'operations' stamp: 'tp 9/15/2023 13:17:28'!
-push: anItemToPush
+!OOStack methodsFor: 'operations' stamp: 'ma 9/17/2023 12:24:03'!
+push: anElement
+	^elements add: (StackElement initializeWith: anElement) ! !
 
-	^items add: anItemToPush ! !
+!OOStack methodsFor: 'operations' stamp: 'ma 9/17/2023 13:29:22'!
+size
+	^elements size -1! !
 
-!OOStack methodsFor: 'operations' stamp: 'tp 9/15/2023 13:22:32'!
+!OOStack methodsFor: 'operations' stamp: 'ma 9/17/2023 13:51:24'!
 top
-	
-	self onEmptyStackRaiseError. 
-	^ items last! !
+	^(elements last) top: self! !
 
 
-!OOStack methodsFor: 'errors' stamp: 'tp 9/15/2023 13:13:28'!
-onEmptyStackRaiseError
+!OOStack methodsFor: 'private operations' stamp: 'ma 9/17/2023 13:03:54'!
+emptyPop
+	^self error: OOStack stackEmptyErrorDescription! !
 
-	self isEmpty ifTrue: [^ self error: OOStack stackEmptyErrorDescription ]! !
+!OOStack methodsFor: 'private operations' stamp: 'ma 9/17/2023 13:55:27'!
+emptyTop
+	^self error: OOStack stackEmptyErrorDescription! !
+
+!OOStack methodsFor: 'private operations' stamp: 'ma 9/17/2023 13:03:18'!
+noEmptyPop
+	^elements remove: elements last! !
+
+!OOStack methodsFor: 'private operations' stamp: 'ma 9/17/2023 13:02:34'!
+noEmptyTop
+	^elements last! !
+
+!OOStack methodsFor: 'private operations' stamp: 'ma 9/17/2023 12:06:55'!
+onEmptyRaiseError
+	self isEmpty ifTrue: [^self error: OOStack stackEmptyErrorDescription]! !
+
+
+!OOStack methodsFor: 'initialize' stamp: 'tp 9/17/2023 14:33:37'!
+initialize
+	elements:= OrderedCollection new.
+	elements add: StackBase new! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
@@ -209,3 +235,61 @@ Object subclass: #SentenceFinderByPrefix
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Stack-Exercise'!
+
+
+!classDefinition: #StackElement category: 'Stack-Exercise'!
+Object subclass: #StackElement
+	instanceVariableNames: 'value'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Stack-Exercise'!
+
+!StackElement methodsFor: 'redirectOperations' stamp: 'tp 9/17/2023 14:36:20'!
+pop: anStack
+	anStack noEmptyPop! !
+
+!StackElement methodsFor: 'redirectOperations' stamp: 'ma 9/17/2023 13:01:04'!
+top: anStack
+	anStack noEmptyTop! !
+
+
+!StackElement methodsFor: 'initialize' stamp: 'ma 9/17/2023 12:22:08'!
+initializeWith: anElement
+	value:= anElement! !
+
+
+!StackElement methodsFor: 'logic' stamp: 'ma 9/17/2023 12:55:15'!
+= anElement
+	^value = anElement value! !
+
+
+!StackElement methodsFor: 'accesing' stamp: 'ma 9/17/2023 12:20:28'!
+value
+	^value
+	! !
+
+"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
+
+!classDefinition: 'StackElement class' category: 'Stack-Exercise'!
+StackElement class
+	instanceVariableNames: ''!
+
+!StackElement class methodsFor: 'as yet unclassified' stamp: 'ma 9/17/2023 12:45:52'!
+initializeWith: anElement
+	^self new initializeWith: anElement ! !
+
+
+!classDefinition: #StackBase category: 'Stack-Exercise'!
+StackElement subclass: #StackBase
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Stack-Exercise'!
+
+!StackBase methodsFor: 'redirect' stamp: 'tp 9/17/2023 14:37:34'!
+pop: anStack
+	anStack emptyPop! !
+
+!StackBase methodsFor: 'redirect' stamp: 'ma 9/17/2023 13:49:19'!
+top: anStack
+	anStack emptyTop! !
