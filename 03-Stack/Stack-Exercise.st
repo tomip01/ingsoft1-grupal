@@ -144,6 +144,61 @@ TestCase subclass: #SentenceFinderByPrefixTest
 	poolDictionaries: ''
 	category: 'Stack-Exercise'!
 
+!SentenceFinderByPrefixTest methodsFor: 'as yet unclassified' stamp: 'tp 9/17/2023 20:20:17'!
+test01StackPreserveElementsAndOrder
+
+	| stackUsedForSearch stackUsedToCompare prefix sentenceFinderbyPrefix |
+	
+	sentenceFinderbyPrefix := SentenceFinderByPrefix new.
+	
+	stackUsedForSearch  := OOStack  new.
+	stackUsedToCompare  := OOStack  new.
+	
+	stackUsedForSearch push: 'winter is coming'.
+	stackUsedToCompare push: 'winter is coming'.
+	stackUsedForSearch push: 'winning si everything'.
+	stackUsedToCompare push: 'winning si everything'.
+	stackUsedForSearch push: 'the winds of Winter'.
+	stackUsedToCompare push: 'the winds of Winter'.
+	stackUsedForSearch push: 'Winter is here'.
+	stackUsedToCompare push: 'Winter is here'.
+		
+	prefix := 'Wint'.
+	
+	sentenceFinderbyPrefix findAllWithPrefix: prefix inOOStack: stackUsedForSearch.
+	
+	self assert: stackUsedForSearch size = stackUsedToCompare size.
+	
+	1 to: stackUsedForSearch size
+		do: [ :unused |
+			|elementInStackUsedForSearch elementInStackForCompare |
+			elementInStackUsedForSearch := stackUsedForSearch pop.
+			elementInStackForCompare := stackUsedToCompare pop.
+			self assert: elementInStackUsedForSearch = elementInStackForCompare .
+			]
+		
+		! !
+
+!SentenceFinderByPrefixTest methodsFor: 'as yet unclassified' stamp: 'tp 9/17/2023 20:21:01'!
+test02FindPrefixInAMultipleElementsStack
+
+	| stack prefix sentenceFinderbyPrefix expectedPrefixes|
+	
+	sentenceFinderbyPrefix := SentenceFinderByPrefix new.
+	
+	stack  := OOStack  new.
+	stack push: 'winter is coming'.
+	stack push: 'winning si everything'.
+	stack push: 'the winds of Winter'.
+	stack push: 'Winter is here'.
+	
+	prefix := 'Wint'.
+	
+	expectedPrefixes := OrderedCollection new.
+	expectedPrefixes add: 'Winter is here'.
+		
+	self assert: expectedPrefixes = (sentenceFinderbyPrefix findAllWithPrefix: prefix inOOStack: stack).! !
+
 
 !classDefinition: #StackElementTest category: 'Stack-Exercise'!
 TestCase subclass: #StackElementTest
@@ -199,13 +254,13 @@ emptyPop
 emptyTop
 	^self error: OOStack stackEmptyErrorDescription! !
 
-!OOStack methodsFor: 'private operations' stamp: 'ma 9/17/2023 13:03:18'!
+!OOStack methodsFor: 'private operations' stamp: 'tp 9/17/2023 20:05:54'!
 noEmptyPop
-	^elements remove: elements last! !
+	^(elements remove: elements last) value! !
 
-!OOStack methodsFor: 'private operations' stamp: 'ma 9/17/2023 13:02:34'!
+!OOStack methodsFor: 'private operations' stamp: 'tp 9/17/2023 20:06:30'!
 noEmptyTop
-	^elements last! !
+	^(elements last) value! !
 
 !OOStack methodsFor: 'private operations' stamp: 'ma 9/17/2023 12:06:55'!
 onEmptyRaiseError
@@ -235,6 +290,31 @@ Object subclass: #SentenceFinderByPrefix
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Stack-Exercise'!
+
+!SentenceFinderByPrefix methodsFor: 'as yet unclassified' stamp: 'tp 9/17/2023 20:19:29'!
+findAllWithPrefix: aPrefix inOOStack: anOOStack
+
+	| collectionWithPrefixes collectionWithAllElements |
+	
+	collectionWithPrefixes := OrderedCollection new.
+	collectionWithAllElements := OrderedCollection  new.
+	
+	1 to: anOOStack size 
+		do: [ :n |
+			| element |
+			element := anOOStack pop.
+			collectionWithAllElements add: element .
+			(element value findString: aPrefix startingAt: 0) = 1 ifTrue: [ collectionWithPrefixes add: element value].
+			].
+	
+	1 to: collectionWithAllElements  size
+		do: [:position |
+			| lastElement |
+			lastElement  := collectionWithAllElements removeLast .
+			anOOStack push:  lastElement .
+			].
+	
+	^collectionWithPrefixes! !
 
 
 !classDefinition: #StackElement category: 'Stack-Exercise'!

@@ -144,6 +144,78 @@ TestCase subclass: #SentenceFinderByPrefixTest
 	poolDictionaries: ''
 	category: 'Stack-Exercise'!
 
+!SentenceFinderByPrefixTest methodsFor: 'as yet unclassified' stamp: 'tp 9/17/2023 20:20:17'!
+test01StackPreserveElementsAndOrder
+
+	| stackUsedForSearch stackUsedToCompare prefix sentenceFinderbyPrefix |
+	
+	sentenceFinderbyPrefix := SentenceFinderByPrefix new.
+	
+	stackUsedForSearch  := OOStack  new.
+	stackUsedToCompare  := OOStack  new.
+	
+	stackUsedForSearch push: 'winter is coming'.
+	stackUsedToCompare push: 'winter is coming'.
+	stackUsedForSearch push: 'winning si everything'.
+	stackUsedToCompare push: 'winning si everything'.
+	stackUsedForSearch push: 'the winds of Winter'.
+	stackUsedToCompare push: 'the winds of Winter'.
+	stackUsedForSearch push: 'Winter is here'.
+	stackUsedToCompare push: 'Winter is here'.
+		
+	prefix := 'Wint'.
+	
+	sentenceFinderbyPrefix findAllWithPrefix: prefix inOOStack: stackUsedForSearch.
+	
+	self assert: stackUsedForSearch size = stackUsedToCompare size.
+	
+	1 to: stackUsedForSearch size
+		do: [ :unused |
+			|elementInStackUsedForSearch elementInStackForCompare |
+			elementInStackUsedForSearch := stackUsedForSearch pop.
+			elementInStackForCompare := stackUsedToCompare pop.
+			self assert: elementInStackUsedForSearch = elementInStackForCompare .
+			]
+		
+		! !
+
+!SentenceFinderByPrefixTest methodsFor: 'as yet unclassified' stamp: 'tp 9/17/2023 20:21:01'!
+test02FindPrefixInAMultipleElementsStack
+
+	| stack prefix sentenceFinderbyPrefix expectedPrefixes|
+	
+	sentenceFinderbyPrefix := SentenceFinderByPrefix new.
+	
+	stack  := OOStack  new.
+	stack push: 'winter is coming'.
+	stack push: 'winning si everything'.
+	stack push: 'the winds of Winter'.
+	stack push: 'Winter is here'.
+	
+	prefix := 'Wint'.
+	
+	expectedPrefixes := OrderedCollection new.
+	expectedPrefixes add: 'Winter is here'.
+		
+	self assert: expectedPrefixes = (sentenceFinderbyPrefix findAllWithPrefix: prefix inOOStack: stack).! !
+
+
+!classDefinition: #StackElementTest category: 'Stack-Exercise'!
+TestCase subclass: #StackElementTest
+	instanceVariableNames: 'value'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Stack-Exercise'!
+
+!StackElementTest methodsFor: 'test' stamp: 'ma 9/17/2023 12:49:20'!
+test01InitializeWithValue
+
+	| stackElement |
+	
+	stackElement := StackElement initializeWith: 'test'.
+	
+	self assert: stackElement value = 'test'! !
+
 
 !classDefinition: #OOStack category: 'Stack-Exercise'!
 Object subclass: #OOStack
@@ -152,37 +224,53 @@ Object subclass: #OOStack
 	poolDictionaries: ''
 	category: 'Stack-Exercise'!
 
-!OOStack methodsFor: 'operations' stamp: 'ma 9/17/2023 12:05:45'!
-initialize
-	elements:= OrderedCollection new! !
-
-!OOStack methodsFor: 'operations' stamp: 'ma 9/17/2023 12:06:16'!
+!OOStack methodsFor: 'operations' stamp: 'ma 9/17/2023 13:41:38'!
 isEmpty
-	^elements size=0! !
+	^elements size = 1! !
 
-!OOStack methodsFor: 'operations' stamp: 'ma 9/17/2023 12:10:14'!
+!OOStack methodsFor: 'operations' stamp: 'tp 9/17/2023 14:37:02'!
 pop
-	self onEmptyRaiseError.
-	^elements remove: elements last! !
+	
+	^(elements last) pop: self! !
 
-!OOStack methodsFor: 'operations' stamp: 'ma 9/17/2023 12:08:16'!
+!OOStack methodsFor: 'operations' stamp: 'ma 9/17/2023 12:24:03'!
 push: anElement
-	^elements add: anElement ! !
+	^elements add: (StackElement initializeWith: anElement) ! !
 
-!OOStack methodsFor: 'operations' stamp: 'ma 9/17/2023 12:07:51'!
+!OOStack methodsFor: 'operations' stamp: 'ma 9/17/2023 13:29:22'!
 size
-	^elements size! !
+	^elements size -1! !
 
-!OOStack methodsFor: 'operations' stamp: 'ma 9/17/2023 12:10:19'!
+!OOStack methodsFor: 'operations' stamp: 'ma 9/17/2023 13:51:24'!
 top
-	self onEmptyRaiseError.
-	^elements last! !
+	^(elements last) top: self! !
 
+
+!OOStack methodsFor: 'private operations' stamp: 'ma 9/17/2023 13:03:54'!
+emptyPop
+	^self error: OOStack stackEmptyErrorDescription! !
+
+!OOStack methodsFor: 'private operations' stamp: 'ma 9/17/2023 13:55:27'!
+emptyTop
+	^self error: OOStack stackEmptyErrorDescription! !
+
+!OOStack methodsFor: 'private operations' stamp: 'tp 9/17/2023 20:05:54'!
+noEmptyPop
+	^(elements remove: elements last) value! !
+
+!OOStack methodsFor: 'private operations' stamp: 'tp 9/17/2023 20:06:30'!
+noEmptyTop
+	^(elements last) value! !
 
 !OOStack methodsFor: 'private operations' stamp: 'ma 9/17/2023 12:06:55'!
 onEmptyRaiseError
 	self isEmpty ifTrue: [^self error: OOStack stackEmptyErrorDescription]! !
 
+
+!OOStack methodsFor: 'initialize' stamp: 'tp 9/17/2023 14:33:37'!
+initialize
+	elements:= OrderedCollection new.
+	elements add: StackBase new! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
@@ -202,3 +290,86 @@ Object subclass: #SentenceFinderByPrefix
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Stack-Exercise'!
+
+!SentenceFinderByPrefix methodsFor: 'as yet unclassified' stamp: 'tp 9/17/2023 20:19:29'!
+findAllWithPrefix: aPrefix inOOStack: anOOStack
+
+	| collectionWithPrefixes collectionWithAllElements |
+	
+	collectionWithPrefixes := OrderedCollection new.
+	collectionWithAllElements := OrderedCollection  new.
+	
+	1 to: anOOStack size 
+		do: [ :n |
+			| element |
+			element := anOOStack pop.
+			collectionWithAllElements add: element .
+			(element value findString: aPrefix startingAt: 0) = 1 ifTrue: [ collectionWithPrefixes add: element value].
+			].
+	
+	1 to: collectionWithAllElements  size
+		do: [:position |
+			| lastElement |
+			lastElement  := collectionWithAllElements removeLast .
+			anOOStack push:  lastElement .
+			].
+	
+	^collectionWithPrefixes! !
+
+
+!classDefinition: #StackElement category: 'Stack-Exercise'!
+Object subclass: #StackElement
+	instanceVariableNames: 'value'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Stack-Exercise'!
+
+!StackElement methodsFor: 'redirectOperations' stamp: 'tp 9/17/2023 14:36:20'!
+pop: anStack
+	anStack noEmptyPop! !
+
+!StackElement methodsFor: 'redirectOperations' stamp: 'ma 9/17/2023 13:01:04'!
+top: anStack
+	anStack noEmptyTop! !
+
+
+!StackElement methodsFor: 'initialize' stamp: 'ma 9/17/2023 12:22:08'!
+initializeWith: anElement
+	value:= anElement! !
+
+
+!StackElement methodsFor: 'logic' stamp: 'ma 9/17/2023 12:55:15'!
+= anElement
+	^value = anElement value! !
+
+
+!StackElement methodsFor: 'accesing' stamp: 'ma 9/17/2023 12:20:28'!
+value
+	^value
+	! !
+
+"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
+
+!classDefinition: 'StackElement class' category: 'Stack-Exercise'!
+StackElement class
+	instanceVariableNames: ''!
+
+!StackElement class methodsFor: 'as yet unclassified' stamp: 'ma 9/17/2023 12:45:52'!
+initializeWith: anElement
+	^self new initializeWith: anElement ! !
+
+
+!classDefinition: #StackBase category: 'Stack-Exercise'!
+StackElement subclass: #StackBase
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Stack-Exercise'!
+
+!StackBase methodsFor: 'redirect' stamp: 'tp 9/17/2023 14:37:34'!
+pop: anStack
+	anStack emptyPop! !
+
+!StackBase methodsFor: 'redirect' stamp: 'ma 9/17/2023 13:49:19'!
+top: anStack
+	anStack emptyTop! !
