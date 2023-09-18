@@ -329,8 +329,8 @@ Object subclass: #SentenceFinderByPrefix
 	poolDictionaries: ''
 	category: 'Stack-Exercise'!
 
-!SentenceFinderByPrefix methodsFor: 'auxiliar' stamp: 'tp 9/18/2023 10:40:56'!
-findAllWithPrefix: aPrefix inOOStack: anOOStack andStoreAllElementsIn: enEmptyCollection
+!SentenceFinderByPrefix methodsFor: 'auxiliar' stamp: 'tp 9/18/2023 10:50:14'!
+findAllWithPrefix: aPrefix inOOStack: anOOStack andStoreAllElementsIn: anEmptyCollection
 
 	| collectionWithPrefixes |
 	
@@ -340,8 +340,8 @@ findAllWithPrefix: aPrefix inOOStack: anOOStack andStoreAllElementsIn: enEmptyCo
 		do: [ :unused |
 			| element |
 			element := anOOStack pop.
-			enEmptyCollection add: element .
-			(self theElement: element hasThePrefixAtStart: aPrefix) ifTrue: [ collectionWithPrefixes add: element value].
+			anEmptyCollection add: element .
+			(self theElement: element hasThePrefixAtStart: aPrefix) ifTrue: [ collectionWithPrefixes add: element ].
 			].
 	
 	^ collectionWithPrefixes! !
